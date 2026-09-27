@@ -56,7 +56,7 @@ const TRMNL_DEVICE device_list[] =
   "seeed_esp32s3", 7,    9,     2,   1,    4,   3,    0xff, 0xff, 0,     0xff, 0xff,    BATT_ADC,  EPD_75,
   "xiao_epaper_mini", 7, 9,     44,  38,   10,  4,    0xff, 0xff, 2,     1,    6,       BATT_ADC,  EPD_426,
   "xiao_epaper_display", 7, 9,  44,  38,   10,  4,    0xff, 0xff, 5,     1,    6,       BATT_ADC,  EPD_75,
-  "xiao_epaper_3clr", 7, 9,     44,  38,   10,  4,    0xff, 0xff, 5,     1,    6,       BATT_ADC,  EPD_75_3CLR,
+  "xiao_epaper_3clr", 7, 9,     2,  3,   4,  1,    0xff, 0xff, 40,     1,    41,       BATT_ADC,  EPD_74R_640x384,
   "xiao_epaper_6clr", 7, 9,     44,  38,   10,  4,    0xff, 0xff, 5,     1,    6,       BATT_ADC,  EPD_75_6CLR,
   "reterminal_e1001", 7, 9,     10,  12,   11,  13,   0xff, 0xff, 3,     1,    21,      BATT_ADC,  EPD_75,
   "reterminal_e1002", 7, 9,     10,  12,   11,  13,   0xff, 0xff, 3,     1,    21,      BATT_ADC,  EPD_75_6CLR,
@@ -72,7 +72,7 @@ const TRMNL_DEVICE device_list[] =
 
 // TRMNL SPI ePaper panel types list. The list order is fixed and based on enumerated values
 // N.B. ALWAYS ADD NEW PANELS TO THE END OF THE LIST
-const DISPLAY_PROFILE dpList[11][3] = { // 1-bit and 2-bit display types for each profile
+const DISPLAY_PROFILE dpList[12][3] = { // 1-bit and 2-bit display types for each profile
     {{EP75_800x480, EP75_800x480_4GRAY}, {EP75_800x480_GEN2, EP75_800x480_4GRAY_GEN2}, {EP75_800x480, EP75_800x480_4GRAY_V2}},
     {{EP426_800x480, EP426_800x480_4GRAY}, {EP426_800x480, EP426_800x480_4GRAY}, {EP426_800x480, EP426_800x480_4GRAY}},
     {{EP397_800x480, EP397_800x480_4GRAY}, {EP397_800x480, EP397_800x480_4GRAY}, {EP397_800x480, EP397_800x480_4GRAY}},
@@ -80,12 +80,18 @@ const DISPLAY_PROFILE dpList[11][3] = { // 1-bit and 2-bit display types for eac
     {{EP75YR_800x480, EP75YR_800x480}, {EP75YR_800x480, EP75YR_800x480}, {EP75YR_800x480, EP75YR_800x480}}, 
     {{EP73_SPECTRA_800x480, EP73_SPECTRA_800x480}, {EP73_SPECTRA_800x480, EP73_SPECTRA_800x480}, {EP73_SPECTRA_800x480, EP73_SPECTRA_800x480}},
     {{EPD_CROWPANEL42, EPD_CROWPANEL42_4GRAY},{EPD_CROWPANEL42, EPD_CROWPANEL42_4GRAY},{EPD_CROWPANEL42, EPD_CROWPANEL42_4GRAY}},
-#ifdef CMD_CS1_CS2
+    #ifdef CMD_CS1_CS2
     {{EP583_648x480, EP583_648x480_4GRAY}, {EP583_648x480, EP583_648x480_4GRAY}, {EP583_648x480, EP583_648x480_4GRAY}},
     {{EPD_M5_PAPER_MONO, EPD_M5_PAPER_MONO_4GRAY},{EPD_M5_PAPER_MONO, EPD_M5_PAPER_MONO_4GRAY},{EPD_M5_PAPER_MONO, EPD_M5_PAPER_MONO_4GRAY}},
     {{EPD_M5_PAPER_COLOR, EPD_M5_PAPER_COLOR},{EPD_M5_PAPER_COLOR, EPD_M5_PAPER_COLOR},{EPD_M5_PAPER_COLOR, EPD_M5_PAPER_COLOR}},
     {{EPD_SEEED_E1004, EPD_SEEED_E1004},{EPD_SEEED_E1004, EPD_SEEED_E1004},{EPD_SEEED_E1004, EPD_SEEED_E1004}},
-#endif
+    #else
+    {{EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}}, // placeholder inutilisé (EPD_583)
+    {{EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}}, // placeholder inutilisé (EPD_PAPER_MONO)
+    {{EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}}, // placeholder inutilisé (EPD_PAPER_COLOR)
+    {{EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}, {EP75_800x480, EP75_800x480}}, // placeholder inutilisé (EPD_133_COLOR)
+    #endif
+    {{EP74R_640x384, EP74R_640x384}, {EP74R_640x384, EP74R_640x384}, {EP74R_640x384, EP74R_640x384}},
 };
 uint8_t u8SpectraPal[512]; // RGB333 mapped to closest Spectra6 color
 #endif // !PARALLEL_EPD
@@ -1686,7 +1692,7 @@ PNG *png = new PNG();
                     }
                 }
                 png->close();
-                if (bbep.getPanelType() != EP75_800x480) { // need to write the inverted plane to do PLANE_FALSE_DIFF
+                if (bbep.getPanelType() != EP75_800x480 && bbep.getPanelType() != EP74R_640x384) { // need to write the inverted plane to do PLANE_FALSE_DIFF
                     bbep.startWrite(PLANE_1); // start writing image data to plane 1
                     png->openRAM((uint8_t *)pPNG, iDataSize, png_draw);
                     if (iPlane == PNG_1_BIT) {

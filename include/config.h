@@ -119,7 +119,7 @@
 #define PIN_BATTERY 3
 #endif
 
-// #define FAKE_BATTERY_VOLTAGE // Uncomment to report 4.2V instead of reading ADC
+#define FAKE_BATTERY_VOLTAGE // Uncomment to report 4.2V instead of reading ADC
 
 #define BUTTON_HOLD_TIME                   5000
 #define BUTTON_MEDIUM_HOLD_TIME            1000
@@ -127,7 +127,7 @@
 #define BUTTON_DOUBLE_CLICK_WINDOW         800
 
 #define SERVER_MAX_RETRIES                 3
-#define API_BASE_URL                       "https://trmnl.app"
+#define API_BASE_URL                       "http://192.168.68.60:2300"
 
 // Abort an image download when the stream goes this long with no data.
 #define IMAGE_STREAM_INACTIVITY_TIMEOUT_MS 15000
@@ -184,6 +184,7 @@ enum {
   EPD_PAPER_MONO,
   EPD_PAPER_COLOR,
   EPD_133_COLOR,
+  EPD_74R_640x384,
 };
 
 /**
